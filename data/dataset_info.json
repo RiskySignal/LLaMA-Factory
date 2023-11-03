@@ -245,5 +245,17 @@
       "response": "",
       "history": ""
     }
+  },
+  "zhuque-1010": {
+    "file_name": "sft.v20231010.llama2.json",
+    "file_sha1": "0f754733cae89a5426e4ac208b69658ad88dc6d2"
+  },
+  "zhuque-1030": {
+    "file_name": "sft.v20231030.llama2.json",
+    "file_sha1": "684b50addfd1dc0b7551391503ab0f361aac7105"
+  },
+  "zhuque": {
+    "file_name": "sft.v20231031.llama2.json",
+    "file_sha1": "08a691d728f669521940aece78a2f959283617e0"
   }
 }
