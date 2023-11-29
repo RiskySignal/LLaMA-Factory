@@ -224,6 +224,55 @@
       "prompt": "text"
     }
   },
+  "pretrain_general": {
+    "file_name": "pretrain-general.jsonl",
+    "file_sha1": "15e8930da2c12cd59328b12e9bf76d22f53521c1",
+    "columns": {
+      "prompt": "text"
+    }
+  },
+  "pretrain_general_1129": {
+    "file_name": "pretrain-general.1129.jsonl",
+    "file_sha1": "b945cc68d6e6d24960cbcd8b5e8418fdabaca968",
+    "columns": {
+      "prompt": "text"
+    }
+  },
+  "pretrain_mixer": {
+    "file_name": "pretrain-mixer.jsonl",
+    "file_sha1": "f522bc45af0ff5ed04042a76d28b73491455446b",
+    "columns": {
+      "prompt": "text"
+    }
+  },
+  "pretrain_mixer_1118": {
+    "file_name": "pretrain-mixer.1118.jsonl",
+    "file_sha1": "9180fa4004e1ea55ee218c5c269be31c3805b07c",
+    "columns": {
+      "prompt": "text"
+    }
+  },
+  "pretrain_mixer_1123": {
+    "file_name": "pretrain-mixer.1123.jsonl",
+    "file_sha1": "96dd360e02d534c00fbbc13f608b31f78e24b20e",
+    "columns": {
+      "prompt": "text"
+    }
+  },
+  "pocketprep_mixer_random_shuffle": {
+    "file_name": "pocketprep-mixer.random_shuffle.jsonl",
+    "file_sha1": "79a0dc6572d3266528e9f394584069e54cb6bddc",
+    "columns": {
+      "prompt": "text"
+    }
+  },
+  "quizlet_mixer": {
+    "file_name": "quizlet-mixer.jsonl",
+    "file_sha1": "dd7a4f0c4d006e46b880e735b3e0ff37eecb2d80",
+    "columns": {
+      "prompt": "text"
+    }
+  },
   "refinedweb": {
     "hf_hub_url": "tiiuae/falcon-refinedweb",
     "columns": {
