@@ -1,6 +1,5 @@
 import json
 import datasets
-from typing import Any, Dict, List
 
 
 _DESCRIPTION = "BELLE multiturn chat dataset."
@@ -23,11 +22,9 @@ class BelleMultiturn(datasets.GeneratorBasedBuilder):
 
     VERSION = datasets.Version("0.0.0")
 
-    def _info(self) -> datasets.DatasetInfo:
+    def _info(self):
         features = datasets.Features({
-            "instruction": datasets.Value("string"),
-            "output": datasets.Value("string"),
-            "history": datasets.Sequence(datasets.Sequence(datasets.Value("string")))
+            "conversations": [{"from": datasets.Value("string"), "value": datasets.Value("string")}]
         })
         return datasets.DatasetInfo(
             description=_DESCRIPTION,
@@ -37,7 +34,7 @@ class BelleMultiturn(datasets.GeneratorBasedBuilder):
             citation=_CITATION
         )
 
-    def _split_generators(self, dl_manager: datasets.DownloadManager) -> List[datasets.SplitGenerator]:
+    def _split_generators(self, dl_manager: datasets.DownloadManager):
         file_path = dl_manager.download(_URL)
         return [
             datasets.SplitGenerator(
@@ -48,10 +45,11 @@ class BelleMultiturn(datasets.GeneratorBasedBuilder):
             )
         ]
 
-    def _generate_examples(self, filepath: str) -> Dict[int, Dict[str, Any]]: # generate multi-turn chat with history
+    def _generate_examples(self, filepath: str):
         with open(filepath, "r", encoding="utf-8") as f:
             for key, row in enumerate(f):
                 data = json.loads(row)
+                conversations = []
                 prompt = data["instruction"].strip()
                 response = data["output"].strip()
 
@@ -59,7 +57,8 @@ class BelleMultiturn(datasets.GeneratorBasedBuilder):
                 human_idx = prompt.rfind("Human:")
                 query = prompt[human_idx+6:assist_idx].strip()
                 prompt = prompt[:human_idx].strip()
-                history = []
+                conversations.insert(0, {"from": "gpt", "value": response})
+                conversations.insert(0, {"from": "human", "value": query})
 
                 while prompt.rfind("Assistant:") != -1:
                     assist_idx = prompt.rfind("Assistant:")
@@ -67,13 +66,10 @@ class BelleMultiturn(datasets.GeneratorBasedBuilder):
                     if human_idx != -1:
                         old_query = prompt[human_idx+6:assist_idx].strip()
                         old_resp = prompt[assist_idx+10:].strip()
-                        history.insert(0, (old_query, old_resp))
+                        conversations.insert(0, {"from": "gpt", "value": old_resp})
+                        conversations.insert(0, {"from": "human", "value": old_query})
                     else:
                         break
                     prompt = prompt[:human_idx].strip()
 
-                yield key, {
-                    "instruction": query,
-                    "output": response,
-                    "history": history
-                }
+                yield key, {"conversations": conversations}

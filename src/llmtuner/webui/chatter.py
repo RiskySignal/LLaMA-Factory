@@ -2,7 +2,7 @@ import gradio as gr
 from gradio.components import Component # cannot use TYPE_CHECKING here
 from typing import TYPE_CHECKING, Any, Dict, Generator, List, Optional, Tuple
 
-from llmtuner.chat.stream_chat import ChatModel
+from llmtuner.chat import ChatModel
 from llmtuner.extras.misc import torch_gc
 from llmtuner.hparams import GeneratingArguments
 from llmtuner.webui.common import get_save_dir
@@ -14,13 +14,32 @@ if TYPE_CHECKING:
 
 class WebChatModel(ChatModel):
 
-    def __init__(self, manager: "Manager", lazy_init: Optional[bool] = True) -> None:
+    def __init__(
+        self,
+        manager: "Manager",
+        demo_mode: Optional[bool] = False,
+        lazy_init: Optional[bool] = True
+    ) -> None:
         self.manager = manager
+        self.demo_mode = demo_mode
         self.model = None
         self.tokenizer = None
         self.generating_args = GeneratingArguments()
-        if not lazy_init:
+
+        if not lazy_init: # read arguments from command line
             super().__init__()
+
+        if demo_mode: # load demo_config.json if exists
+            import json
+            try:
+                with open("demo_config.json", "r", encoding="utf-8") as f:
+                    args = json.load(f)
+                assert args.get("model_name_or_path", None) and args.get("template", None)
+                super().__init__(args)
+            except AssertionError:
+                print("Please provided model name and template in `demo_config.json`.")
+            except:
+                print("Cannot find `demo_config.json` at current directory.")
 
     @property
     def loaded(self) -> bool:
@@ -36,6 +55,8 @@ class WebChatModel(ChatModel):
             error = ALERTS["err_no_model"][lang]
         elif not get("top.model_path"):
             error = ALERTS["err_no_path"][lang]
+        elif self.demo_mode:
+            error = ALERTS["err_demo"][lang]
 
         if error:
             gr.Warning(error)
@@ -67,6 +88,12 @@ class WebChatModel(ChatModel):
 
     def unload_model(self, data: Dict[Component, Any]) -> Generator[str, None, None]:
         lang = data[self.manager.get_elem_by_name("top.lang")]
+
+        if self.demo_mode:
+            gr.Warning(ALERTS["err_demo"][lang])
+            yield ALERTS["err_demo"][lang]
+            return
+
         yield ALERTS["info_unloading"][lang]
         self.model = None
         self.tokenizer = None

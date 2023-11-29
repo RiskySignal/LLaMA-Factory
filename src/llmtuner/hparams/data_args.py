@@ -42,7 +42,7 @@ class DataArguments:
     )
     dataset_dir: Optional[str] = field(
         default="data",
-        metadata={"help": "The name of the folder containing datasets."}
+        metadata={"help": "Path to the folder containing the datasets."}
     )
     split: Optional[str] = field(
         default="train",
@@ -51,6 +51,10 @@ class DataArguments:
     cutoff_len: Optional[int] = field(
         default=1024,
         metadata={"help": "The maximum length of the model inputs after tokenization."}
+    )
+    reserved_label_len: Optional[int] = field(
+        default=1,
+        metadata={"help": "The maximum length reserved for label after tokenization."}
     )
     train_on_prompt: Optional[bool] = field(
         default=False,
@@ -110,6 +114,9 @@ class DataArguments:
     )
 
     def __post_init__(self):
+        if self.reserved_label_len >= self.cutoff_len:
+            raise ValueError("`reserved_label_len` must be smaller than `cutoff_len`.")
+
         if self.streaming and self.val_size > 1e-6 and self.val_size < 1:
             raise ValueError("Streaming mode should have an integer val size.")
 

@@ -1,5 +1,5 @@
-from typing import Literal, Optional
-from dataclasses import dataclass, field
+from typing import Any, Dict, Literal, Optional
+from dataclasses import asdict, dataclass, field
 
 
 @dataclass
@@ -21,10 +21,6 @@ class ModelArguments:
     split_special_tokens: Optional[bool] = field(
         default=False,
         metadata={"help": "Whether or not the special tokens should be split during the tokenization process."}
-    )
-    use_auth_token: Optional[bool] = field(
-        default=False,
-        metadata={"help": "Will use the token generated when running `huggingface-cli login`."}
     )
     model_revision: Optional[str] = field(
         default="main",
@@ -48,7 +44,7 @@ class ModelArguments:
     )
     checkpoint_dir: Optional[str] = field(
         default=None,
-        metadata={"help": "Path to the directory(s) containing the delta model checkpoints as well as the configurations."}
+        metadata={"help": "Path to the directory(s) containing the model checkpoints as well as the configurations."}
     )
     flash_attn: Optional[bool] = field(
         default=False,
@@ -58,21 +54,9 @@ class ModelArguments:
         default=False,
         metadata={"help": "Enable shift short attention (S^2-Attn) proposed by LongLoRA."}
     )
-    reward_model: Optional[str] = field(
-        default=None,
-        metadata={"help": "Path to the directory containing the checkpoints of the reward model."}
-    )
-    plot_loss: Optional[bool] = field(
-        default=False,
-        metadata={"help": "Whether to plot the training loss after fine-tuning or not."}
-    )
-    hf_auth_token: Optional[str] = field(
+    hf_hub_token: Optional[str] = field(
         default=None,
         metadata={"help": "Auth token to log in with Hugging Face Hub."}
-    )
-    export_dir: Optional[str] = field(
-        default=None,
-        metadata={"help": "Path to the directory to save the exported model."}
     )
 
     def __post_init__(self):
@@ -85,9 +69,7 @@ class ModelArguments:
         if self.checkpoint_dir is not None: # support merging multiple lora weights
             self.checkpoint_dir = [cd.strip() for cd in self.checkpoint_dir.split(",")]
 
-        if self.quantization_bit is not None:
-            assert self.quantization_bit in [4, 8], "We only accept 4-bit or 8-bit quantization."
+        assert self.quantization_bit in [None, 8, 4], "We only accept 4-bit or 8-bit quantization."
 
-        if self.use_auth_token == True and self.hf_auth_token is not None:
-            from huggingface_hub.hf_api import HfFolder # lazy load
-            HfFolder.save_token(self.hf_auth_token)
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
