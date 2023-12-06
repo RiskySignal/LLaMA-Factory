@@ -230,8 +230,8 @@
       "prompt": "text"
     }
   },
-  "pretrain_general": {
-    "file_name": "pretrain-general.jsonl",
+  "pretrain_general_1118": {
+    "file_name": "pretrain-general.1118.jsonl",
     "file_sha1": "15e8930da2c12cd59328b12e9bf76d22f53521c1",
     "columns": {
       "prompt": "text"
@@ -275,6 +275,13 @@
   "quizlet_mixer": {
     "file_name": "quizlet-mixer.jsonl",
     "file_sha1": "dd7a4f0c4d006e46b880e735b3e0ff37eecb2d80",
+    "columns": {
+      "prompt": "text"
+    }
+  },
+  "1205_six_data_mixer": {
+    "file_name": "1205_six_data_mixer.jsonl",
+    "file_sha1": "d307ab8940635fbc4781b001537b415e3a0f3d3b",
     "columns": {
       "prompt": "text"
     }
