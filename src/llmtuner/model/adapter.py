@@ -66,8 +66,8 @@ def init_adapter(
 
         if model_args.checkpoint_dir is not None:
             is_mergeable = True
-            if getattr(model, "quantization_method", None) == "gptq":
-                assert len(model_args.checkpoint_dir) == 1, "GPTQ quantized model only accepts a single checkpoint."
+            if getattr(model, "quantization_method", None): # merge lora in quantized model is unstable
+                assert len(model_args.checkpoint_dir) == 1, "Quantized model only accepts a single checkpoint."
                 is_mergeable = False
 
             if (is_trainable and finetuning_args.resume_lora_training) or (not is_mergeable):
@@ -101,6 +101,9 @@ def init_adapter(
                 modules_to_save=finetuning_args.additional_target
             )
             model = get_peft_model(model, lora_config)
+
+        for param in filter(lambda p: p.requires_grad, model.parameters()):
+            param.data = param.data.to(torch.float32)
 
     if model_args.checkpoint_dir is not None:
         logger.info("Loaded fine-tuned model from checkpoint(s): {}".format(",".join(model_args.checkpoint_dir)))
