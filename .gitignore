@@ -166,3 +166,6 @@ data/scripts
 user.config
 saves/
 cache/
+data/dataset_info.json
+run_on_multi_gpu.sh
+run_on_multi_gpu_2.sh
